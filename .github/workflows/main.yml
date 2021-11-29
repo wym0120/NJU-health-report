@@ -1,0 +1,32 @@
+name: Health Report Action
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  
+  schedule:
+    - cron: '30 8 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Script
+        env:
+          YRY_USERNAME: ${{ secrets.yryusername }}
+          YRY_PASSWORD: ${{ secrets.yrypassword }}
+          YRY_LOCATION: ${{ secrets.yrylocation }}
+        run: |
+          python run.py
